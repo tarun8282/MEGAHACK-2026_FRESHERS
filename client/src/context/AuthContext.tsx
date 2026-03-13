@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
         fetchProfile(session.user);
       } else {
@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const fetchProfile = async (sessionUser: User) => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('*, states(name, code), cities(name)')
       .eq('id', sessionUser.id)
