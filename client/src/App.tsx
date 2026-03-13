@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
           <Route path="/heatmap" element={<HeatmapView />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 };
