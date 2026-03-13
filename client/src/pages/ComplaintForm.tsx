@@ -15,7 +15,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || '/api';
 
 const IMAGE_MAX_BYTES = 5 * 1024 * 1024;   // 5 MB
 const VIDEO_MAX_BYTES = 30 * 1024 * 1024;  // 30 MB

@@ -17,6 +17,17 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { format, parseISO, differenceInHours } from 'date-fns';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix Leaflet's broken default icon paths in Vite builds
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 interface ComplaintMedia {
     id: string;
@@ -275,8 +286,25 @@ const ComplaintDetail: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="h-48 bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 font-medium italic">
-                                Map Component Placeholder
+                            <div className="h-64 bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 relative z-0">
+                                {complaint.latitude && complaint.longitude ? (
+                                    <MapContainer
+                                        center={[complaint.latitude, complaint.longitude]}
+                                        zoom={15}
+                                        style={{ height: '100%', width: '100%' }}
+                                        scrollWheelZoom={false}
+                                    >
+                                        <TileLayer
+                                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        />
+                                        <Marker position={[complaint.latitude, complaint.longitude]} />
+                                    </MapContainer>
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-medium italic">
+                                        Location data not available for map
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

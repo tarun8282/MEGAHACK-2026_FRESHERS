@@ -335,12 +335,18 @@ router.get('/:id', async (req, res) => {
             .eq('complaint_id', complaint.id)
             .order('created_at', { ascending: true });
 
+        const { data: media } = await supabase
+            .from('complaint_media')
+            .select('*')
+            .eq('complaint_id', complaint.id);
+
         res.json({
             success: true,
             complaint: {
                 ...complaint,
                 ai_classification: aiClassification || null,
-                status_history: statusHistory || []
+                status_history: statusHistory || [],
+                media: media || []
             }
         });
     } catch (error) {
