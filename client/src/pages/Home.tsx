@@ -17,27 +17,43 @@ const Home: React.FC = () => {
             ))}
           </svg>
         </div>
-        
+
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-saffron/5 blur-[120px] -z-10 rounded-full"></div>
-        
-        <div className="relative max-w-4xl mx-auto text-center space-y-6 z-10">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-deva">
-            <span className="text-saffron">Nagar</span><span className="text-india-green">Setu</span>
-          </h1>
-          <p className="text-2xl text-slate-600 dark:text-slate-400/90 font-medium italic font-deva">
-            Connecting citizens to municipal care.
-          </p>
-          <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Report potholes, water leaks, and garbage issues directly to your municipal corporation. 
-            AI-powered classification and real-time tracking until the job is done.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-            <Link to="/complaint/new" className="w-full sm:w-auto px-8 py-4 bg-saffron text-white rounded-lg text-lg font-bold hover:bg-saffron-600 transition-all shadow-xl shadow-saffron-200 dark:shadow-none flex items-center justify-center gap-2">
-              Report an Issue <ArrowRight size={20} />
-            </Link>
-            <Link to="/heatmap" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
-              View Heatmap <MapPin size={20} />
-            </Link>
+
+        <div className="relative max-w-7xl mx-auto grid md:grid-cols-[1fr,400px] gap-12 items-center z-10">
+          {/* Left Column (Content) */}
+          <div className="text-center md:text-left space-y-6">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white font-deva">
+              <span className="text-saffron">Nagar</span><span className="text-india-green">Setu</span>
+            </h1>
+            <p className="text-2xl text-slate-600 dark:text-slate-400/90 font-medium italic font-deva">
+              Connecting citizens to municipal care.
+            </p>
+            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+              Report potholes, water leaks, and garbage issues directly to your municipal corporation.
+              AI-powered classification and real-time tracking until the job is done.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-6">
+              <Link to="/complaint/new" className="w-full sm:w-auto px-8 py-4 bg-saffron text-white rounded-lg text-lg font-bold hover:bg-saffron-600 transition-all shadow-xl shadow-saffron-200 dark:shadow-none flex items-center justify-center gap-2">
+                Report an Issue <ArrowRight size={20} />
+              </Link>
+              <Link to="/heatmap" className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-lg text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                View Heatmap <MapPin size={20} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right Column (PM's Photo) */}
+          <div className="relative aspect-[400/440] rounded-xl overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800">
+            <img
+              src="/01.png"
+              alt="Hon'ble Prime Minister Narendra Modi"
+              className="w-full h-full object-cover object-top"
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.15)]">
+              <p className="text-center text-sm font-bold text-slate-900 dark:text-white mb-1">Hon'ble Prime Minister Narendra Modi</p>
+              <p className="text-center text-[10px] md:text-xs text-saffron font-semibold uppercase tracking-widest leading-none">A vision for a clean, digitally connected India</p>
+            </div>
           </div>
         </div>
       </section>
@@ -63,12 +79,12 @@ const Home: React.FC = () => {
         ].map((feature, i) => (
           <div key={i} className="p-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-t-4 border border-slate-200/60 dark:border-slate-700/60 rounded-lg space-y-4 hover:shadow-lg transition-shadow relative overflow-hidden" style={{ borderTopColor: i === 0 ? '#FF9933' : i === 1 ? '#138808' : '#000080' }}>
             <div className="absolute top-0 right-0 -mr-4 -mt-4 opacity-[0.12] dark:opacity-[0.04] text-navy-blue dark:text-white">
-               <svg width="100" height="100" viewBox="0 0 100 100">
-                 <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="4" />
-                 {[...Array(24)].map((_, j) => (
-                   <line key={j} x1="50" y1="50" x2="50" y2="5" stroke="currentColor" strokeWidth="2" transform={`rotate(${j * 15} 50 50)`} />
-                 ))}
-               </svg>
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="4" />
+                {[...Array(24)].map((_, j) => (
+                  <line key={j} x1="50" y1="50" x2="50" y2="5" stroke="currentColor" strokeWidth="2" transform={`rotate(${j * 15} 50 50)`} />
+                ))}
+              </svg>
             </div>
             <div className="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-lg flex items-center justify-center relative z-10">
               {feature.icon}
@@ -89,7 +105,7 @@ const Home: React.FC = () => {
             ))}
           </svg>
         </div>
-        
+
         <div className="relative z-10 space-y-12">
           <div className="space-y-2">
             <div className="text-saffron-300 font-bold tracking-widest uppercase text-xs">Government of India Initiative</div>
