@@ -13,6 +13,7 @@ interface ComplaintData {
     priority?: string;
     created_at: string;
     assigned_department_id?: string;
+    media?: { id: string; public_url: string; is_video: boolean }[];
 }
 
 interface TimelineItem {
@@ -268,11 +269,31 @@ const ComplaintDetail: React.FC = () => {
                         )}
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm space-y-4 text-center">
-                        <div className="aspect-square bg-slate-100 dark:bg-slate-900 rounded-lg flex items-center justify-center text-slate-400">
-                             Media Item Proof
-                        </div>
-                        <p className="text-xs text-slate-500 italic">User uploaded evidence</p>
+                    <div className="bg-white dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                        <h3 className="font-bold text-slate-900 dark:text-white mb-4">Evidence & Media</h3>
+                        
+                        {complaint.media && complaint.media.length > 0 ? (
+                            <div className="grid grid-cols-2 gap-4">
+                                {complaint.media.map((item) => (
+                                    <div key={item.id} className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 group">
+                                        {item.is_video ? (
+                                            <video src={item.public_url} controls className="w-full h-full object-cover" />
+                                        ) : (
+                                            <a href={item.public_url} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                                                <img src={item.public_url} alt="Complaint Evidence" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center">
+                                <div className="aspect-square bg-slate-100 dark:bg-slate-900 rounded-lg flex items-center justify-center text-slate-400 mb-2">
+                                     No Media Attached
+                                </div>
+                                <p className="text-xs text-slate-500 italic">No evidence was uploaded for this report</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
