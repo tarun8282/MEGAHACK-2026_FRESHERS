@@ -50,8 +50,8 @@ const createIcon = (priority: string) => {
 // Create custom icon for user's current location
 const createUserIcon = () => {
     return L.divIcon({
-        html: `<div style="background: #2563eb; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3), 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-        iconSize: [20, 20],
+        html: `<div style="background: #2563eb; border: 2px solid white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3), 0 2px 8px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [14, 14],
         className: 'user-marker'
     });
 };
