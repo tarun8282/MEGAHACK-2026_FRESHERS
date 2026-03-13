@@ -1,0 +1,179 @@
+-- NagarSetu Database Schema
+
+-- 1. States Table
+CREATE TABLE public.states (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    code TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 2. Cities Table
+CREATE TABLE public.cities (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    state_id UUID REFERENCES public.states(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    official_name TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 3. Departments Table
+CREATE TABLE public.departments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    city_id UUID REFERENCES public.cities(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    category_slug TEXT NOT NULL,
+    helpline TEXT,
+    email TEXT,
+    sla_hours INTEGER DEFAULT 24,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 4. Profiles Table (Extends Auth.Users)
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    full_name TEXT,
+    phone TEXT UNIQUE,
+    role TEXT CHECK (role IN ('citizen', 'dept_officer', 'mc_admin', 'state_admin')),
+    state_id UUID REFERENCES public.states(id),
+    city_id UUID REFERENCES public.cities(id),
+    department_id UUID REFERENCES public.departments(id),
+    ward_number TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 5. Complaints Table
+CREATE TABLE public.complaints (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    complaint_number TEXT UNIQUE NOT NULL,
+    citizen_id UUID REFERENCES public.profiles(id),
+    title TEXT NOT NULL,
+    description TEXT,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
+    address TEXT,
+    city_id UUID REFERENCES public.cities(id),
+    state_id UUID REFERENCES public.states(id),
+    ward_number TEXT,
+    status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'ai_processing', 'under_review', 'in_progress', 'resolved', 'rejected', 'escalated')),
+    priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+    category TEXT,
+    assigned_department_id UUID REFERENCES public.departments(id),
+    assigned_officer_id UUID REFERENCES public.profiles(id),
+    citizen_rating INTEGER CHECK (citizen_rating >= 1 AND citizen_rating <= 5),
+    sla_deadline TIMESTAMPTZ,
+    resolved_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 6. Complaint Media Table
+CREATE TABLE public.complaint_media (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    complaint_id UUID REFERENCES public.complaints(id) ON DELETE CASCADE,
+    storage_path TEXT NOT NULL,
+    public_url TEXT NOT NULL,
+    is_video BOOLEAN DEFAULT false,
+    is_resolution_proof BOOLEAN DEFAULT false,
+    uploaded_by UUID REFERENCES public.profiles(id),
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 7. AI Classifications Table
+CREATE TABLE public.ai_classifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    complaint_id UUID REFERENCES public.complaints(id) ON DELETE CASCADE,
+    category TEXT,
+    severity TEXT,
+    department_name TEXT,
+    authority_contact JSONB,
+    reasoning TEXT,
+    confidence_score DOUBLE PRECISION,
+    raw_response JSONB,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 8. Status History Table (Audit Log)
+CREATE TABLE public.status_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    complaint_id UUID REFERENCES public.complaints(id) ON DELETE CASCADE,
+    old_status TEXT,
+    new_status TEXT,
+    changed_by UUID REFERENCES public.profiles(id),
+    remarks TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS
+ALTER TABLE public.states ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.departments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.complaints ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.complaint_media ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_classifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.status_history ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies (Simplified for Hackathon, following logic in spec)
+
+-- Profiles: Users can read all profiles (to see officer names etc), but only update their own
+CREATE POLICY "Public profiles are viewable by everyone" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Complaints:
+-- Citizens: See only their own
+CREATE POLICY "Citizens can view own complaints" ON public.complaints FOR SELECT 
+USING (auth.uid() = citizen_id);
+
+-- Dept Officers: See complaints in their city and department
+CREATE POLICY "Officers can view complaints in their dept" ON public.complaints FOR SELECT 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role = 'dept_officer' 
+    AND city_id = public.complaints.city_id 
+    AND department_id = public.complaints.assigned_department_id
+  )
+);
+
+-- MC Admin: See complaints in their city
+CREATE POLICY "MC Admins can view all complaints in city" ON public.complaints FOR SELECT 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role = 'mc_admin' 
+    AND city_id = public.complaints.city_id
+  )
+);
+
+-- State Admin: See complaints in their state
+CREATE POLICY "State Admins can view all complaints in state" ON public.complaints FOR SELECT 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role = 'state_admin' 
+    AND state_id = public.complaints.state_id
+  )
+);
+
+-- Insert policy for citizens
+CREATE POLICY "Citizens can insert complaints" ON public.complaints FOR INSERT 
+WITH CHECK (auth.uid() = citizen_id);
+
+-- Update policy for officers and admins
+CREATE POLICY "Officers and Admins can update complaints" ON public.complaints FOR UPDATE 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role IN ('dept_officer', 'mc_admin')
+  )
+);
+
+-- Enable Realtime
+-- Note: In Supabase, this is often done via the dashboard, but can be done via SQL
+-- ALTER PUBLICATION supabase_realtime ADD TABLE public.complaints;
