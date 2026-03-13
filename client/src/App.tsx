@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CitizenDashboard from './pages/CitizenDashboard';
 import OfficerDashboard from './pages/DepartmentDashboard';
+import OfficerComplaints from './pages/OfficerComplaints';
+import OfficerAnalytics from './pages/OfficerAnalytics';
 import AdminDashboard from './pages/AdminDashboard';
 import ComplaintDetail from './pages/ComplaintDetail';
 import ComplaintForm from './pages/ComplaintForm';
@@ -45,6 +47,8 @@ const App: React.FC = () => {
           <Route path="/complaint/:id" element={user ? <ComplaintDetail /> : <Navigate to="/login" />} />
 
           <Route path="/officer/dashboard" element={user?.role === 'dept_officer' ? <OfficerDashboard /> : <Navigate to="/login" />} />
+          <Route path="/officer/complaints" element={user?.role === 'dept_officer' ? <OfficerComplaints /> : <Navigate to="/login" />} />
+          <Route path="/officer/analytics" element={user?.role === 'dept_officer' ? <OfficerAnalytics /> : <Navigate to="/login" />} />
           <Route path="/admin/dashboard" element={['mc_admin', 'state_admin'].includes(user?.role) ? <AdminDashboard /> : <Navigate to="/login" />} />
 
           <Route path="/heatmap" element={<HeatmapView />} />

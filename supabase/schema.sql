@@ -56,11 +56,12 @@ CREATE TABLE public.citizens (
 CREATE INDEX IF NOT EXISTS idx_citizens_email ON public.citizens(email);
 CREATE INDEX IF NOT EXISTS idx_citizens_phone ON public.citizens(phone);
 
--- 4b. Officers & Admins Table (Extends Auth.Users)
+-- 4b. Officers & Admins Table (Standalone)
 CREATE TABLE public.officers (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     full_name TEXT,
-    email TEXT UNIQUE,
+    username TEXT UNIQUE,
+    password TEXT,
     phone TEXT,
     role TEXT CHECK (role IN ('dept_officer', 'mc_admin', 'state_admin')),
     state_id UUID REFERENCES public.states(id),
@@ -70,7 +71,7 @@ CREATE TABLE public.officers (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_officers_email ON public.officers(email);
+CREATE INDEX IF NOT EXISTS idx_officers_username ON public.officers(username);
 
 -- 5. Complaints Table
 CREATE TABLE public.complaints (
@@ -233,3 +234,4 @@ ALTER TABLE public.states
 ALTER TABLE public.cities
   ADD COLUMN username TEXT UNIQUE,
   ADD COLUMN password TEXT;
+

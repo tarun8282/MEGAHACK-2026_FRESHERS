@@ -25,7 +25,7 @@ interface AuthContextType {
   sendLoginOTP: (email: string) => Promise<authAPI.SignUpResponse>;
   verifyOTPAndSignUp: (email: string, fullName: string, mobileNo: string, otp: string, password?: string, cityId?: string, stateId?: string) => Promise<authAPI.SignUpResponse>;
   citizenLogin: (email: string, password: string) => Promise<authAPI.SignUpResponse>;
-  adminLogin: (email: string, password: string) => Promise<authAPI.SignUpResponse>;
+  adminLogin: (username: string, password: string) => Promise<authAPI.SignUpResponse>;
   refreshUser: () => Promise<void>;
 }
 
@@ -138,8 +138,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return response;
   };
 
-  const loginAdmin = async (email: string, password: string) => {
-    const response = await authAPI.adminLogin(email, password);
+  const loginAdmin = async (username: string, password: string) => {
+    const response = await authAPI.adminLogin(username, password);
 
     if (response.success && response.data?.user) {
       await fetchProfile(response.data.user);

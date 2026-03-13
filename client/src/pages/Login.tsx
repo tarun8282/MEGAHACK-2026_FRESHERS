@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   const [citizenPassword, setCitizenPassword] = useState('');
 
   // Admin login state
-  const [adminEmail, setAdminEmail] = useState('');
+  const [adminUsername, setAdminUsername] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
 
   // ==================== CITIZEN LOGIN ====================
@@ -55,8 +55,8 @@ const Login: React.FC = () => {
 
   // ==================== ADMIN LOGIN ====================
 
-  const handleAdminEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAdminEmail(e.target.value);
+  const handleAdminUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAdminUsername(e.target.value);
   };
 
   const handleAdminPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,19 +67,22 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!adminEmail || !adminPassword) {
-      setError('Please enter both email and password');
+    if (!adminUsername || !adminPassword) {
+      setError('Please enter both username and password');
       return;
     }
 
     setLoading(true);
     try {
-      const response = await adminLogin(adminEmail, adminPassword);
+      const response = await adminLogin(adminUsername, adminPassword);
 
       if (response.success) {
+        const userRole = response.data?.profile?.role;
+        const targetPath = userRole === 'dept_officer' ? '/officer/dashboard' : '/admin/dashboard';
+        
         setSuccessMessage('Login successful! Redirecting...');
         setTimeout(() => {
-          navigate('/admin/dashboard');
+          navigate(targetPath);
         }, 1500);
       } else {
         setError(response.error || response.message);
@@ -111,11 +114,10 @@ const Login: React.FC = () => {
               setError('');
               setSuccessMessage('');
             }}
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-              mode === 'citizen'
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${mode === 'citizen'
                 ? 'bg-blue-600 text-white'
                 : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
-            }`}
+              }`}
           >
             Citizen
           </button>
@@ -126,11 +128,10 @@ const Login: React.FC = () => {
               setError('');
               setSuccessMessage('');
             }}
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
-              mode === 'admin'
+            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${mode === 'admin'
                 ? 'bg-blue-600 text-white'
                 : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
-            }`}
+              }`}
           >
             Admin/Officer
           </button>
@@ -231,16 +232,16 @@ const Login: React.FC = () => {
               Admin and Officer accounts are created by administrators. Contact your system administrator to set up your account.
             </div>
 
-            {/* Email */}
+            {/* Username */}
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Email Address
+                Username
               </label>
               <input
-                type="email"
-                value={adminEmail}
-                onChange={handleAdminEmailChange}
-                placeholder="admin@nagarsetu.com"
+                type="text"
+                value={adminUsername}
+                onChange={handleAdminUsernameChange}
+                placeholder="admin_mumbai"
                 className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={loading}
                 autoFocus
@@ -289,7 +290,7 @@ const Login: React.FC = () => {
             {/* Login Button */}
             <button
               type="submit"
-              disabled={loading || !adminEmail || !adminPassword}
+              disabled={loading || !adminUsername || !adminPassword}
               className="w-full py-3 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-medium transition-colors flex items-center justify-center gap-2"
             >
               {loading && <Loader className="w-4 h-4 animate-spin" />}
