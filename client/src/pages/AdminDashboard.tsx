@@ -52,10 +52,10 @@ const AdminDashboard: React.FC = () => {
     }
 
     const kpiData = [
-        { label: 'Total Complaints', val: stats?.totalComplaints || 0, delta: '+0%', icon: <BarChart3 className="text-saffron-600" />, color: 'bg-saffron-100' },
-        { label: 'Resolution Rate', val: `${stats?.resolutionRate || 0}%`, delta: '+0%', icon: <TrendingUp className="text-india-green-600" />, color: 'bg-india-green-100' },
-        { label: 'Active Officers', val: stats?.activeOfficers || 0, delta: '0%', icon: <Users className="text-navy-blue-600" />, color: 'bg-navy-blue-100' },
-        { label: 'SLA Breaches', val: stats?.slaBreaches || 0, delta: '-0%', icon: <AlertTriangle className="text-saffron-700" />, color: 'bg-saffron-200' },
+        { label: 'Total Complaints', val: stats?.totalComplaints || 0, icon: <BarChart3 className="text-saffron-600" />, color: 'bg-saffron-100' },
+        { label: 'Resolution Rate', val: `${stats?.resolutionRate || 0}%`, icon: <TrendingUp className="text-india-green-600" />, color: 'bg-india-green-100' },
+        { label: 'Active Officers', val: stats?.activeOfficers || 0, icon: <Users className="text-navy-blue-600" />, color: 'bg-navy-blue-100' },
+        { label: 'SLA Breaches', val: stats?.slaBreaches || 0, icon: <AlertTriangle className="text-saffron-700" />, color: 'bg-saffron-200' },
     ];
 
     return (
@@ -63,10 +63,10 @@ const AdminDashboard: React.FC = () => {
             {/* Admin Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                        {user?.cities?.name || 'Mumbai'} City Overview
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight text-india-blue">
+                        {user?.cities?.name || 'City'} Overview
                     </h1>
-                    <p className="text-slate-500 font-medium">Real-time performance across all municipal departments.</p>
+                    <p className="text-slate-500 font-medium italic">Administration command center for {user?.cities?.name || 'your municipality'}.</p>
                 </div>
                 <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 transition-all shadow-sm">
                     <Download size={18} /> Export Report
@@ -84,7 +84,6 @@ const AdminDashboard: React.FC = () => {
                             <div className="text-slate-500 text-xs font-bold uppercase tracking-widest">{kpi.label}</div>
                             <div className="flex items-end gap-3">
                                 <span className="text-4xl font-black text-slate-900 dark:text-white">{kpi.val}</span>
-                                <span className="text-sm font-bold text-green-500 mb-1">{kpi.delta}</span>
                             </div>
                         </div>
                     </div>

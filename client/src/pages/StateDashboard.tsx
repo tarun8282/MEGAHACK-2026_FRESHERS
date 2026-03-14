@@ -104,10 +104,10 @@ const StateDashboard: React.FC = () => {
     }
     
     const stats = [
-        { label: 'Total Complaints', value: stateStats?.totalComplaints?.toLocaleString() || '0', change: '+0%', isPositive: true, icon: FileText, color: 'text-navy-blue-600', bg: 'bg-navy-blue-50' },
-        { label: 'State Resolution', value: `${stateStats?.resolutionRate || 0}%`, change: '+0%', isPositive: true, icon: CheckCircle2, color: 'text-india-green-600', bg: 'bg-india-green-50' },
-        { label: 'Active Cities', value: stateStats?.activeCities || '0', change: '0%', isPositive: true, icon: MapPin, color: 'text-saffron-600', bg: 'bg-saffron-50' },
-        { label: 'SLA Breaches', value: stateStats?.slaBreaches?.toLocaleString() || '0', change: '-0%', isPositive: true, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
+        { label: 'Total Complaints', value: stateStats?.totalComplaints?.toLocaleString() || '0', icon: FileText, color: 'text-navy-blue-600', bg: 'bg-navy-blue-50' },
+        { label: 'State Resolution', value: `${stateStats?.resolutionRate || 0}%`, icon: CheckCircle2, color: 'text-india-green-600', bg: 'bg-india-green-50' },
+        { label: 'Active Cities', value: stateStats?.activeCities || '0', icon: MapPin, color: 'text-saffron-600', bg: 'bg-saffron-50' },
+        { label: 'SLA Breaches', value: stateStats?.slaBreaches?.toLocaleString() || '0', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
     ];
 
     const categoryDistributionColors = [
@@ -128,9 +128,9 @@ const StateDashboard: React.FC = () => {
                         State Administration Portal
                     </div>
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                        {user?.states?.name || 'Maharashtra'} <span className="text-saffron-600">State Overview</span>
+                        {user?.states?.name || 'Your State'} <span className="text-saffron-600">Overview</span>
                     </h1>
-                    <p className="text-slate-500 font-medium">Monitoring civic performance across all municipal corporations.</p>
+                    <p className="text-slate-500 font-medium italic">Monitoring civic performance across {user?.states?.name || 'all municipal corporations'}.</p>
                 </div>
                 
                 <div className="flex items-center gap-3">
@@ -170,10 +170,6 @@ const StateDashboard: React.FC = () => {
                         <div className="flex justify-between items-start mb-4">
                             <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                                 <stat.icon size={24} />
-                            </div>
-                            <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${stat.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                {stat.isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                                {stat.change}
                             </div>
                         </div>
                         <div className="space-y-1">
