@@ -40,7 +40,9 @@ const Navbar: React.FC = () => {
   const dashboardPath =
     user?.role === 'dept_officer'
       ? '/officer/dashboard'
-      : ['mc_admin', 'state_admin'].includes(user?.role as string)
+      : user?.role === 'state_admin'
+      ? '/state/dashboard'
+      : user?.role === 'mc_admin'
       ? '/admin/dashboard'
       : '/dashboard';
 

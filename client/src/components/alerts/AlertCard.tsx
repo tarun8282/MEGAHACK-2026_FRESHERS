@@ -44,7 +44,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert }) => {
   const styles = getPriorityStyle(alert.priority);
   
   // Try to format date gracefully. If generic string is used by backend, display directly.
-  const formattedDate = new Date(alert.publishedAt).toLocaleDateString(undefined, {
+  const formattedDate = new Date(alert.published_at).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -95,7 +95,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert }) => {
         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
           <Calendar size={16} />
           <span className="font-medium">Time:</span>
-          <span className="truncate" translate="no">{formattedDate === 'Invalid Date' ? alert.publishedAt : formattedDate}</span>
+          <span className="truncate" translate="no">{formattedDate === 'Invalid Date' ? alert.published_at : formattedDate}</span>
         </div>
       </div>
     </div>

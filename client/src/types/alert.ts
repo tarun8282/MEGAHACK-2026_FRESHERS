@@ -8,5 +8,8 @@ export interface Alert {
   priority: AlertPriority;
   location: string;
   source: string;
-  publishedAt: string;
+  published_at: string;
+  state_id?: string;
+  city_id?: string;
+  created_by?: string;
 }

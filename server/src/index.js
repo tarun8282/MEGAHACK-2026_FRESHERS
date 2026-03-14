@@ -28,6 +28,8 @@ app.use((req, res, next) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/complaints', require('./routes/complaints'));
 app.use('/api/alerts', require('./routes/alerts'));
+app.use('/api/cities', require('./routes/cities'));
+app.use('/api/states', require('./routes/states'));
 
 // Basic Route
 app.get('/health', (req, res) => {
@@ -47,6 +49,11 @@ app.use((req, res) => {
 // Global Error Handler - MUST RETURN JSON
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
+    // Write to a log file so we can see it in this environment
+    try {
+        require('fs').appendFileSync('server_errors.log', `[${new Date().toISOString()}] ${req.method} ${req.url}\n${err.stack}\n\n`);
+    } catch (e) {}
+
     res.status(err.status || 500).json({
         success: false,
         error: err.message || 'Internal Server Error',

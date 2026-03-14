@@ -3,8 +3,10 @@ import { fetchAlerts } from '../api/alerts';
 import { Alert } from '../types/alert';
 import AlertCard from '../components/alerts/AlertCard';
 import { Bell, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Alerts: React.FC = () => {
+  const { user } = useAuth();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,10 +15,10 @@ const Alerts: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchAlerts();
+      const data = await fetchAlerts(user?.state_id, user?.city_id);
       if (Array.isArray(data)) {
         // Sort alerts by published date (newest first)
-        const sortedData = [...data].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+        const sortedData = [...data].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
         setAlerts(sortedData);
       } else {
         // If API returns no array or unexpected shape but successfully returned
