@@ -251,7 +251,13 @@ router.get('/', async (req, res) => {
                     .select('*')
                     .eq('complaint_id', complaint.id)
                     .single();
-                return { ...complaint, ai_classification: aiClassification || null };
+                
+                const { data: media } = await supabase
+                    .from('complaint_media')
+                    .select('*')
+                    .eq('complaint_id', complaint.id);
+
+                return { ...complaint, ai_classification: aiClassification || null, complaint_media: media || [] };
             })
         );
 
@@ -374,5 +380,44 @@ router.patch('/:id/status', upload.array('proof', 1), async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+// POST /api/complaints/:id/evidence — add evidence photo (shows in Evidence Gallery)
+router.post('/:id/evidence', upload.single('evidence'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { uploaded_by } = req.body;
+        const file = req.file;
 
-module.exports = router;
+        if (!file) return res.status(400).json({ success: false, error: 'No file provided' });
+
+        const ext = path.extname(file.originalname) || '.jpg';
+        const storagePath = `evidence/${id}/${Date.now()}-${file.originalname}`;
+
+        const { error: uploadErr } = await supabase.storage
+            .from('complaint-media')
+            .upload(storagePath, file.buffer, { contentType: file.mimetype });
+
+        if (uploadErr) throw uploadErr;
+
+        const { data: urlData } = supabase.storage
+            .from('complaint-media')
+            .getPublicUrl(storagePath);
+
+        const { error: insertErr } = await supabase.from('complaint_media').insert({
+            complaint_id: id,
+            storage_path: storagePath,
+            public_url: urlData.publicUrl,
+            is_video: false,
+            is_resolution_proof: false,
+            uploaded_by: uploaded_by || null
+        });
+
+        if (insertErr) throw insertErr;
+
+        res.json({ success: true, public_url: urlData.publicUrl });
+    } catch (error) {
+        console.error('Error uploading evidence:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+module.exports = router;
