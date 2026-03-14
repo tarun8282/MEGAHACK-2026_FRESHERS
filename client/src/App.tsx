@@ -9,7 +9,8 @@ import CitizenDashboard from './pages/CitizenDashboard';
 import OfficerDashboard from './pages/DepartmentDashboard';
 import OfficerComplaints from './pages/OfficerComplaints';
 import OfficerAnalytics from './pages/OfficerAnalytics';
-import AdminDashboard from './pages/AdminDashboard';
+import MCDashboard from './pages/MCDashboard';
+
 import ComplaintDetail from './pages/ComplaintDetail';
 import ComplaintForm from './pages/ComplaintForm';
 import HeatmapView from './pages/HeatmapView';
@@ -55,7 +56,7 @@ const App: React.FC = () => {
           <Route path="/officer/analytics" element={user?.role === 'dept_officer' ? <OfficerAnalytics /> : <Navigate to="/login" />} />
 
           {/* Admin Dashboards */}
-          <Route path="/admin/dashboard" element={user?.role === 'mc_admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
+          <Route path="/admin/dashboard" element={user?.role === 'mc_admin' ? <MCDashboard /> : <Navigate to="/login" />} />
           <Route path="/state/dashboard" element={user?.role === 'state_admin' ? <StateDashboard /> : <Navigate to="/login" />} />
 
           <Route path="/heatmap" element={<HeatmapView />} />
