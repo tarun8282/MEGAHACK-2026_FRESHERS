@@ -30,6 +30,8 @@ app.use('/api/complaints', require('./routes/complaints'));
 app.use('/api/alerts', require('./routes/alerts'));
 app.use('/api/cities', require('./routes/cities'));
 app.use('/api/states', require('./routes/states'));
+app.use('/api/mc', require('./routes/mc'));
+
 
 // Basic Route
 app.get('/health', (req, res) => {
