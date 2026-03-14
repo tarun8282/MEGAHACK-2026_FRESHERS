@@ -75,7 +75,8 @@ const Login: React.FC = () => {
       if (response.success) {
         const userRole = response.data?.profile?.role;
         const targetPath =
-          userRole === 'dept_officer' ? '/officer/dashboard' : '/admin/dashboard';
+          userRole === 'dept_officer' ? '/officer/dashboard' :
+          userRole === 'state_admin' ? '/state/dashboard' : '/admin/dashboard';
         setSuccessMessage('Login successful! Redirecting...');
         setTimeout(() => navigate(targetPath), 1500);
       } else {

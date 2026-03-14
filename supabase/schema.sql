@@ -147,6 +147,11 @@ ALTER TABLE public.status_history ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
+-- States, Cities, Departments: Public read (lookup/reference data)
+CREATE POLICY "States are publicly readable" ON public.states FOR SELECT USING (true);
+CREATE POLICY "Cities are publicly readable" ON public.cities FOR SELECT USING (true);
+CREATE POLICY "Departments are publicly readable" ON public.departments FOR SELECT USING (true);
+
 -- Citizens & Officers RLS
 CREATE POLICY "Public citizens viewable by everyone" ON public.citizens FOR SELECT USING (true);
 CREATE POLICY "Users can update own citizen profile" ON public.citizens FOR UPDATE USING (auth.uid() = id);
@@ -243,6 +248,9 @@ CREATE TABLE public.alerts (
     priority TEXT CHECK (priority IN ('low', 'medium', 'high', 'critical')),
     location TEXT,
     source TEXT,
-    "publishedAt" TIMESTAMPTZ DEFAULT NOW(),
+    state_id UUID REFERENCES states(id),
+    city_id UUID REFERENCES cities(id),
+    created_by UUID,
+    published_at TIMESTAMPTZ DEFAULT NOW(),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );

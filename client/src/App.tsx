@@ -15,6 +15,7 @@ import ComplaintForm from './pages/ComplaintForm';
 import HeatmapView from './pages/HeatmapView';
 import Emergency from './pages/Emergency';
 import Alerts from './pages/Alerts';
+import StateDashboard from './pages/StateDashboard';
 import { useAuth } from './context/AuthContext';
 
 const App: React.FC = () => {
@@ -53,8 +54,9 @@ const App: React.FC = () => {
           <Route path="/officer/complaints" element={user?.role === 'dept_officer' ? <OfficerComplaints /> : <Navigate to="/login" />} />
           <Route path="/officer/analytics" element={user?.role === 'dept_officer' ? <OfficerAnalytics /> : <Navigate to="/login" />} />
 
-          {/* Admin — type-safe check from main branch */}
-          <Route path="/admin/dashboard" element={user?.role && ['mc_admin', 'state_admin'].includes(user.role) ? <AdminDashboard /> : <Navigate to="/login" />} />
+          {/* Admin Dashboards */}
+          <Route path="/admin/dashboard" element={user?.role === 'mc_admin' ? <AdminDashboard /> : <Navigate to="/login" />} />
+          <Route path="/state/dashboard" element={user?.role === 'state_admin' ? <StateDashboard /> : <Navigate to="/login" />} />
 
           <Route path="/heatmap" element={<HeatmapView />} />
         </Routes>
